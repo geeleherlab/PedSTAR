@@ -1,0 +1,43 @@
+# macOS and editor files
+.DS_Store
+.Rhistory
+.RData
+.Rproj.user/
+*.Rproj
+
+# Local configuration and credentials
+.env
+*.local
+config/*.local.*
+
+# Raw/private data and intermediate analysis objects
+data/
+raw_data/
+objects/
+outputs/
+results/
+figtabs/
+depmap/
+*.rds
+*.Rds
+*.RDS
+*.qs
+*.h5ad
+*.loom
+*.mtx
+*.rda
+
+# Manuscripts and non-shareable working documents
+Manuscript.pdf
+*.docx
+~$*
+
+# Generated reports and large binary outputs
+*.html
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.tiff
+*.svg
+

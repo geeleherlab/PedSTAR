@@ -1,0 +1,96 @@
+# Example configuration for PedSTAR analysis scripts.
+# Copy this file to a local, untracked config file before running analyses.
+
+paths:
+  gep_loadings: "path/to/community_geps.RDS"
+  metadata: "path/to/meta.rds"
+  community_index: "path/to/community_gep_index.rds"
+  split0_usages: "path/to/split0_H.rds"
+  single_r_label_scores: "path/to/label_scores.RDS"
+  single_r_delta_values: "path/to/delta_values.RDS"
+  numbat_metadata: "path/to/numbat_metadata.Rds"
+  output_dir: "outputs/gep_annotation_inputs"
+
+gene_sets:
+  hallmark: "path/to/h.all.v7.4.symbols.gmt"
+  cell_types: "path/to/c8.all.v7.4.symbols.gmt"
+  kegg: "path/to/c2.cp.kegg.v7.4.symbols.gmt"
+  positional: "path/to/c1.all.v7.4.symbols.gmt"
+  transcription_factor_targets: "path/to/c3.tft.v7.4.symbols.gmt"
+  go_biological_process: "path/to/c5.go.bp.v7.4.symbols.gmt"
+  immunologic: "path/to/c7.immunesigdb.v7.4.symbols.gmt"
+
+parameters:
+  top_genes: 50
+  top_cells: 100
+  top_enrichment_terms: 5
+
+gosh_benchmark:
+  dataset_key: "Kildisiute_GOSH"
+
+  paths:
+    gep_loadings: "path/to/community_geps_filtered.RDS"
+    community_index: "path/to/Kildisiute_GOSH_gepindex.RDS"
+    split0_usages: "path/to/cNMF_split0.usages.consensus.txt"
+    single_r_label_scores: "path/to/GOSH.sc.label.scores.RDS"
+    single_r_delta_values: "path/to/delta_values.RDS"
+    output_dir: "outputs/gosh_benchmark_inputs"
+    human_labels: "path/to/gosh_human_labels.csv"
+    label_matching_predictions: "path/to/gosh_ai_label_matching_predictions.csv"
+    results_dir: "outputs/gosh_benchmark_results"
+
+  gene_sets:
+    hallmark: "path/to/h.all.v7.4.symbols.gmt"
+    cell_types: "path/to/c8.all.v7.4.symbols.gmt"
+    kegg: "path/to/c2.cp.kegg.v7.4.symbols.gmt"
+    positional: "path/to/c1.all.v7.4.symbols.gmt"
+    transcription_factor_targets: "path/to/c3.tft.v7.4.symbols.gmt"
+    go_biological_process: "path/to/c5.go.bp.v7.4.symbols.gmt"
+    immunologic: "path/to/c7.immunesigdb.v7.4.symbols.gmt"
+
+  parameters:
+    top_genes: 50
+    top_cells: 100
+    top_enrichment_terms: 5
+
+gep_coexpression:
+  paths:
+    split0_usages: "path/to/split0_H.rds"
+    community_index: "path/to/community_gep_index.rds"
+    output_dir: "outputs/gep_coexpression"
+
+  parameters:
+    activity_source: "first_split0_program"
+
+gtex_expression:
+  genes:
+    - STEAP1
+    - NPTXR
+    - TMEM178B
+    - MLC1
+    - TENM1
+    - NLGN1
+    - CACNA1B
+    - SDK1
+
+  paths:
+    gene_tpm_gct: "path/to/GTEx_gene_tpm.gct.gz"
+    sample_attributes: "path/to/GTEx_sample_attributes.txt"
+    output_dir: "outputs/gtex_expression"
+
+depmap:
+  genes:
+    - STEAP1
+    - NPTXR
+
+  brain_disease_labels:
+    - Meningothelial Tumor
+    - Diffuse Glioma
+    - Embryonal Tumor
+    - Rhabdoid Cancer
+    - Chordoma
+
+  paths:
+    expression_table: "path/to/depmap_expression_STEAP1_NPTXR.csv"
+    protein_table: "path/to/depmap_protein_STEAP1_NPTXR.csv"
+    output_dir: "outputs/depmap"
