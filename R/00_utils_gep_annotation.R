@@ -18,6 +18,71 @@ read_usage_matrix <- function(path) {
   tibble::column_to_rownames(as.data.frame(usage), 1)
 }
 
+get_gep_activity <- function(split0_h, program_ids, activity_source = "last_split0_program") {
+  if (activity_source == "first_split0_program") {
+    return(split0_h[, program_ids[1]])
+  }
+
+  if (activity_source == "last_split0_program") {
+    return(split0_h[, program_ids[length(program_ids)]])
+  }
+
+  if (activity_source == "mean_split0_programs") {
+    return(rowMeans(split0_h[, program_ids, drop = FALSE], na.rm = TRUE))
+  }
+
+  stop("Unsupported activity_source. Use 'first_split0_program', 'last_split0_program', or 'mean_split0_programs'.")
+}
+
+fit_gmm_active_cells <- function(activity,
+                                 seeds = c(666, 123, 7, 23, 47),
+                                 posterior_cutoff = NULL) {
+  stopifnot(requireNamespace("mclust", quietly = TRUE))
+
+  cell_names <- names(activity)
+  activity <- as.numeric(activity)
+  names(activity) <- cell_names
+
+  best_model <- NULL
+  best_bic <- -Inf
+  best_seed <- NA_integer_
+
+  for (seed in seeds) {
+    set.seed(seed)
+    fit <- tryCatch(mclust::Mclust(activity), error = function(e) NULL)
+    if (!is.null(fit) && is.finite(fit$bic) && fit$bic > best_bic) {
+      best_model <- fit
+      best_bic <- fit$bic
+      best_seed <- seed
+    }
+  }
+
+  if (is.null(best_model)) {
+    return(NULL)
+  }
+
+  active_component <- which.max(best_model$parameters$mean)
+  threshold <- min(activity[best_model$classification == active_component])
+  posterior <- apply(best_model$z, 1, max)
+  is_active <- activity > threshold
+
+  if (!is.null(posterior_cutoff)) {
+    is_active <- is_active & best_model$classification == active_component & posterior >= posterior_cutoff
+  }
+
+  data.frame(
+    cell = names(activity),
+    activity = activity,
+    component = best_model$classification,
+    posterior = posterior,
+    active = is_active,
+    threshold = threshold,
+    active_component = active_component,
+    best_seed = best_seed,
+    bic = best_bic
+  )
+}
+
 calculate_gene_set_enrichment <- function(gep_vector, gene_set_db, top_n = 50) {
   gep_vector <- sort(gep_vector, decreasing = TRUE)
   top_genes <- names(gep_vector)[seq_len(min(top_n, length(gep_vector)))]

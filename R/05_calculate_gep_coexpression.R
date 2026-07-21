@@ -26,14 +26,7 @@ colnames(gep_activity) <- paste0("GEP", seq_len(n_geps))
 
 for (gep_id in seq_len(n_geps)) {
   program_ids <- communities_other[[gep_id]]$Split0
-
-  if (activity_source == "first_split0_program") {
-    gep_activity[, gep_id] <- split0_h[, program_ids[1]]
-  } else if (activity_source == "mean_split0_programs") {
-    gep_activity[, gep_id] <- rowMeans(split0_h[, program_ids, drop = FALSE], na.rm = TRUE)
-  } else {
-    stop("Unsupported activity_source. Use 'first_split0_program' or 'mean_split0_programs'.")
-  }
+  gep_activity[, gep_id] <- get_gep_activity(split0_h, program_ids, activity_source)
 }
 
 results <- vector("list", n_geps * n_geps)

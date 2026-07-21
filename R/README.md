@@ -6,6 +6,7 @@ Scripts for GEP prompt generation and summary analyses.
 - `01_generate_gep_annotation_inputs.R`: writes one PedSTAR annotation input text file per GEP.
 - `02_generate_gosh_benchmark_inputs.R`: writes benchmark input text files for the GOSH GEPs.
 - `03_score_gosh_label_matching.R`: scores AI label-matching attempts against human labels.
-- `04_calculate_gep_coexpression.R`: calculates pairwise Spearman co-expression between GEP activity profiles.
-- `05_summarize_gtex_expression.R`: summarizes GTEx tissue expression for selected candidate genes.
-- `06_summarize_depmap_expression.R`: summarizes DepMap RNA and protein data for selected candidate genes.
+- `04_define_gep_active_cells.R`: defines active cells for each GEP using Gaussian mixture models.
+- `05_calculate_gep_coexpression.R`: calculates pairwise Spearman co-expression between GEP activity profiles.
+- `06_summarize_gtex_expression.R`: summarizes GTEx tissue expression for selected candidate genes.
+- `07_summarize_depmap_expression.R`: summarizes DepMap RNA and protein data for selected candidate genes.

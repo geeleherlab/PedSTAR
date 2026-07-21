@@ -53,6 +53,17 @@ gosh_benchmark:
     top_cells: 100
     top_enrichment_terms: 5
 
+gep_active_cells:
+  paths:
+    split0_usages: "path/to/split0_H.rds"
+    community_index: "path/to/community_gep_index.rds"
+    output_dir: "outputs/gep_active_cells"
+
+  parameters:
+    activity_source: "last_split0_program"
+    seeds: [666, 123, 7, 23, 47]
+    posterior_cutoff:
+
 gep_coexpression:
   paths:
     split0_usages: "path/to/split0_H.rds"
