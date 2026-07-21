@@ -61,7 +61,9 @@ gep_active_cells:
 
   parameters:
     activity_source: "last_split0_program"
-    seeds: [666, 123, 7, 23, 47]
+    seeds: [666]
+    fit_strategy: "fixed_seed_retry"
+    max_tries: 5
     posterior_cutoff:
 
 gep_coexpression:

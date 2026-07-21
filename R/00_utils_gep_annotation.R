@@ -35,7 +35,9 @@ get_gep_activity <- function(split0_h, program_ids, activity_source = "last_spli
 }
 
 fit_gmm_active_cells <- function(activity,
-                                 seeds = c(666, 123, 7, 23, 47),
+                                 seeds = 666,
+                                 fit_strategy = "fixed_seed_retry",
+                                 max_tries = 5,
                                  posterior_cutoff = NULL) {
   stopifnot(requireNamespace("mclust", quietly = TRUE))
 
@@ -43,43 +45,54 @@ fit_gmm_active_cells <- function(activity,
   activity <- as.numeric(activity)
   names(activity) <- cell_names
 
-  best_model <- NULL
-  best_bic <- -Inf
-  best_seed <- NA_integer_
+  model <- NULL
+  best_seed <- seeds[1]
 
-  for (seed in seeds) {
-    set.seed(seed)
-    fit <- tryCatch(mclust::Mclust(activity), error = function(e) NULL)
-    if (!is.null(fit) && is.finite(fit$bic) && fit$bic > best_bic) {
-      best_model <- fit
-      best_bic <- fit$bic
-      best_seed <- seed
+  if (fit_strategy == "fixed_seed_retry") {
+    set.seed(best_seed)
+    tries <- 0
+    while (is.null(model) && tries < max_tries) {
+      tries <- tries + 1
+      model <- tryCatch(mclust::Mclust(activity), error = function(e) NULL)
     }
+  } else if (fit_strategy == "best_bic_across_seeds") {
+    best_bic <- -Inf
+    for (seed in seeds) {
+      set.seed(seed)
+      fit <- tryCatch(mclust::Mclust(activity), error = function(e) NULL)
+      if (!is.null(fit) && is.finite(fit$bic) && fit$bic > best_bic) {
+        model <- fit
+        best_bic <- fit$bic
+        best_seed <- seed
+      }
+    }
+  } else {
+    stop("Unsupported fit_strategy. Use 'fixed_seed_retry' or 'best_bic_across_seeds'.")
   }
 
-  if (is.null(best_model)) {
+  if (is.null(model)) {
     return(NULL)
   }
 
-  active_component <- which.max(best_model$parameters$mean)
-  threshold <- min(activity[best_model$classification == active_component])
-  posterior <- apply(best_model$z, 1, max)
+  active_component <- which.max(model$parameters$mean)
+  threshold <- min(activity[model$classification == active_component])
+  posterior <- apply(model$z, 1, max)
   is_active <- activity > threshold
 
   if (!is.null(posterior_cutoff)) {
-    is_active <- is_active & best_model$classification == active_component & posterior >= posterior_cutoff
+    is_active <- is_active & model$classification == active_component & posterior >= posterior_cutoff
   }
 
   data.frame(
     cell = names(activity),
     activity = activity,
-    component = best_model$classification,
+    component = model$classification,
     posterior = posterior,
     active = is_active,
     threshold = threshold,
     active_component = active_component,
     best_seed = best_seed,
-    bic = best_bic
+    bic = model$bic
   )
 }
 

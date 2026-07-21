@@ -17,6 +17,8 @@ communities_other <- readRDS(config$paths$community_index)
 
 activity_source <- config$parameters$activity_source
 seeds <- unlist(config$parameters$seeds)
+fit_strategy <- config$parameters$fit_strategy
+max_tries <- config$parameters$max_tries
 posterior_cutoff <- config$parameters$posterior_cutoff
 if (is.null(posterior_cutoff) || is.na(posterior_cutoff)) {
   posterior_cutoff <- NULL
@@ -33,6 +35,8 @@ for (gep_id in seq_along(communities_other)) {
   classified <- fit_gmm_active_cells(
     activity = activity,
     seeds = seeds,
+    fit_strategy = fit_strategy,
+    max_tries = max_tries,
     posterior_cutoff = posterior_cutoff
   )
 
